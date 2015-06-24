@@ -325,7 +325,11 @@ MarkerClusterer.prototype.getMarkers = function() {
  *  @return {Number} The number of markers.
  */
 MarkerClusterer.prototype.getTotalMarkers = function() {
-  return this.markers_.length;
+  var result = 0;
+  for(var i = 0; i < this.markers_.length; i++){
+    result += this.markers_[i].cluster || 1;
+  }
+  return result;
 };
 
 
@@ -359,7 +363,10 @@ MarkerClusterer.prototype.getMaxZoom = function() {
  */
 MarkerClusterer.prototype.calculator_ = function(markers, numStyles) {
   var index = 0;
-  var count = markers.length;
+  var count = 0;
+  for(var i = 0; i < markers.length; i++){
+    count += markers[i].cluster || 1;
+  }
   var dv = count;
   while (dv !== 0) {
     dv = parseInt(dv / 10, 10);
@@ -858,7 +865,10 @@ Cluster.prototype.addMarker = function(marker) {
     this.calculateBounds_();
   } else {
     if (this.averageCenter_) {
-      var l = this.markers_.length + 1;
+      var l = 1;
+      for(var j = 0; j < this.markers_.length; j++){
+        l += this.markers_[j].cluster || 1;
+      }
       var lat = (this.center_.lat() * (l-1) + marker.getPosition().lat()) / l;
       var lng = (this.center_.lng() * (l-1) + marker.getPosition().lng()) / l;
       this.center_ = new google.maps.LatLng(lat, lng);
@@ -869,7 +879,10 @@ Cluster.prototype.addMarker = function(marker) {
   marker.isAdded = true;
   this.markers_.push(marker);
 
-  var len = this.markers_.length;
+  var len = 0;
+  for(var i = 0; i < this.markers_.length; i++){
+    len += this.markers_[i].cluster || 1;
+  }
   if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
     // Min cluster size not reached so show the marker.
     marker.setMap(this.map_);
@@ -877,7 +890,7 @@ Cluster.prototype.addMarker = function(marker) {
 
   if (len == this.minClusterSize_) {
     // Hide the markers that were showing.
-    for (var i = 0; i < len; i++) {
+    for (var i = 0; i < this.markers_.length; i++) {
       this.markers_[i].setMap(null);
     }
   }
@@ -932,7 +945,11 @@ Cluster.prototype.remove = function() {
  * @return {number} The cluster center.
  */
 Cluster.prototype.getSize = function() {
-  return this.markers_.length;
+  var result = 0;
+  for(var i = 0; i < this.markers_.length; i++){
+    result += this.markers_[i].cluster || 1;
+  }
+  return result;
 };
 
 
@@ -1003,7 +1020,12 @@ Cluster.prototype.updateIcon = function() {
     return;
   }
 
-  if (this.markers_.length < this.minClusterSize_) {
+  var len = 0;
+  for(var j = 0; j < this.markers_.length; j++){
+    len += this.markers_[j].cluster || 1;
+  }
+
+  if (len < this.minClusterSize_) {
     // Min cluster size not yet reached.
     this.clusterIcon_.hide();
     return;
