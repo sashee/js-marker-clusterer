@@ -879,10 +879,7 @@ Cluster.prototype.addMarker = function(marker) {
   marker.isAdded = true;
   this.markers_.push(marker);
 
-  var len = 0;
-  for(var i = 0; i < this.markers_.length; i++){
-    len += this.markers_[i].cluster || 1;
-  }
+  var len = this.markers_.length;
   if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
     // Min cluster size not reached so show the marker.
     marker.setMap(this.map_);
@@ -1020,10 +1017,7 @@ Cluster.prototype.updateIcon = function() {
     return;
   }
 
-  var len = 0;
-  for(var j = 0; j < this.markers_.length; j++){
-    len += this.markers_[j].cluster || 1;
-  }
+  var len = this.markers_.length;
 
   if (len < this.minClusterSize_) {
     // Min cluster size not yet reached.
